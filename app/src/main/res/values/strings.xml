@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">HawContextMenu</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_menu_demo01">menu_demo01</string>
+</resources>

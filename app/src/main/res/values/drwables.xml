@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="common_bar_selector_bg_pressed" type="drawable">#C2C2C2</item>
+    <item name="transparent" type="drawable">#00000000</item>
+</resources>

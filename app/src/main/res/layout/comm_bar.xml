@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/common_bar"
+    android:layout_width="match_parent"
+    android:layout_height="40dip"
+    android:background="@color/main_background"
+    android:orientation="horizontal">
+
+
+    <LinearLayout
+        android:id="@+id/left_layout"
+        style="@style/common_bar_layout"
+        android:paddingLeft="0dp">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/middle_layout"
+        style="@style/common_bar_layout"
+        android:layout_weight="1">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/right_layout"
+        style="@style/common_bar_layout"
+        android:paddingRight="0dp">
+
+    </LinearLayout>
+
+
+</LinearLayout>
