@@ -102,7 +102,7 @@ public class CommonBar {
             if (leftDrawable != null && setting.isLeftImageShow()) {
                 leftTextView.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
             }
-            //设置左边文字
+            //设置左边文字的内容和颜色
             if (StringUtils.isNotEmpty(setting.getLeftText())) {
                 leftTextView.setText(setting.getLeftText());
                 leftTextView.setTextSize(setting.getLeftTextSize());
