@@ -2,8 +2,6 @@ package com.haw.hawcontextmenu.commonbar;
 
 import android.graphics.Color;
 
-import com.haw.hawcontextmenu.MenuObject;
-
 import java.util.List;
 
 /**
