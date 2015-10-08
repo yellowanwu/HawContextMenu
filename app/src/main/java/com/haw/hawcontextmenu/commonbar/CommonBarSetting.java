@@ -1,13 +1,16 @@
 package com.haw.hawcontextmenu.commonbar;
 
 import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Administrator on 2015-9-30.
  */
-public class CommonBarSetting {
+public class CommonBarSetting implements Parcelable {
     private static final float TEXT_SIZE = 16f;
     private static final String TEXT_COLOR = "#222222";
 
@@ -36,6 +39,71 @@ public class CommonBarSetting {
     private String menuTitle;
     private boolean hasMenu = false;
     private List<MenuObject> mMenuObjects;
+
+
+
+    public CommonBarSetting(){}
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.leftText);
+        dest.writeInt(this.leftImageId);
+        dest.writeFloat(this.leftTextSize);
+        dest.writeInt(this.leftTextColor);
+        dest.writeByte(leftLayoutShow ? (byte) 1 : (byte) 0);
+        dest.writeByte(leftImageShow ? (byte) 1 : (byte) 0);
+        dest.writeString(this.rightText);
+        dest.writeInt(this.rightImageId);
+        dest.writeFloat(this.rightTextSize);
+        dest.writeInt(this.rightTextColor);
+        dest.writeByte(rightImageShow ? (byte) 1 : (byte) 0);
+        dest.writeByte(rightLayoutShow ? (byte) 1 : (byte) 0);
+        dest.writeString(this.middleText);
+        dest.writeInt(this.middleTextColor);
+        dest.writeFloat(this.middleTextSize);
+        dest.writeByte(middleTextClickable ? (byte) 1 : (byte) 0);
+        dest.writeString(this.menuTitle);
+        dest.writeByte(hasMenu ? (byte) 1 : (byte) 0);
+        dest.writeList(this.mMenuObjects);
+    }
+
+    protected CommonBarSetting(Parcel in) {
+        this.leftText = in.readString();
+        this.leftImageId = in.readInt();
+        this.leftTextSize = in.readFloat();
+        this.leftTextColor = in.readInt();
+        this.leftLayoutShow = in.readByte() != 0;
+        this.leftImageShow = in.readByte() != 0;
+        this.rightText = in.readString();
+        this.rightImageId = in.readInt();
+        this.rightTextSize = in.readFloat();
+        this.rightTextColor = in.readInt();
+        this.rightImageShow = in.readByte() != 0;
+        this.rightLayoutShow = in.readByte() != 0;
+        this.middleText = in.readString();
+        this.middleTextColor = in.readInt();
+        this.middleTextSize = in.readFloat();
+        this.middleTextClickable = in.readByte() != 0;
+        this.menuTitle = in.readString();
+        this.hasMenu = in.readByte() != 0;
+        this.mMenuObjects = new ArrayList<MenuObject>();
+        in.readList(this.mMenuObjects, List.class.getClassLoader());
+    }
+
+    public static final Creator<CommonBarSetting> CREATOR = new Creator<CommonBarSetting>() {
+        public CommonBarSetting createFromParcel(Parcel source) {
+            return new CommonBarSetting(source);
+        }
+
+        public CommonBarSetting[] newArray(int size) {
+            return new CommonBarSetting[size];
+        }
+    };
 
 
     public boolean isMiddleTextClickable() {
@@ -190,4 +258,7 @@ public class CommonBarSetting {
     public void setMenuObjects(List<MenuObject> mMenuObjects) {
         this.mMenuObjects = mMenuObjects;
     }
+
+
+
 }

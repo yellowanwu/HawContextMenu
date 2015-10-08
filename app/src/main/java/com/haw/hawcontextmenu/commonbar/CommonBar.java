@@ -49,7 +49,13 @@ public class CommonBar {
         initLeftLayout(setting);
         initMiddleLayout(setting);
         initRightLayout(setting);
+        //haw:初始化功能菜单栏
+        initMenuFragment(setting);
         return this;
+    }
+
+    private void initMenuFragment(CommonBarSetting setting) {
+
     }
 
 
