@@ -1,6 +1,8 @@
 package com.haw.hawcontextmenu.commonbar;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
@@ -32,6 +34,8 @@ public class CommonBar {
     private LinearLayout leftLayout;
     private LinearLayout middleLayout;
     private LinearLayout rightLayout;
+    private FragmentManager fragmentManager;
+    private DialogFragment mMenuDialogFragment;
 
     public CommonBar(Activity activity, int layoutId) {
         this.mActivity = activity;
@@ -43,6 +47,7 @@ public class CommonBar {
         leftLayout = (LinearLayout) this.barLayout.findViewById(R.id.left_layout);
         middleLayout = (LinearLayout) this.barLayout.findViewById(R.id.middle_layout);
         rightLayout = (LinearLayout) this.barLayout.findViewById(R.id.right_layout);
+        fragmentManager = this.mActivity.getFragmentManager();//getSupportFragmentManager();
     }
 
     public CommonBar init(CommonBarSetting setting) {
@@ -55,14 +60,14 @@ public class CommonBar {
     }
 
     private void initMenuFragment(CommonBarSetting setting) {
-
+        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(setting);
     }
 
 
     private void initLeftLayout(CommonBarSetting setting) {
-        if(this.mActivity instanceof CommonBarCustomLayout){
-            CommonBarCustomLayout customLayout = (CommonBarCustomLayout)this.mActivity;
-            if(customLayout.customLeftLayout()){
+        if (this.mActivity instanceof CommonBarCustomLayout) {
+            CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
+            if (customLayout.customLeftLayout()) {
                 return;
             }
         }
@@ -71,9 +76,9 @@ public class CommonBar {
 
 
     private void initMiddleLayout(CommonBarSetting setting) {
-        if(this.mActivity instanceof CommonBarCustomLayout){
-            CommonBarCustomLayout customLayout = (CommonBarCustomLayout)this.mActivity;
-            if(customLayout.customMiddleLayout()){
+        if (this.mActivity instanceof CommonBarCustomLayout) {
+            CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
+            if (customLayout.customMiddleLayout()) {
                 return;
             }
         }
@@ -81,9 +86,9 @@ public class CommonBar {
     }
 
     private void initRightLayout(CommonBarSetting setting) {
-        if(this.mActivity instanceof CommonBarCustomLayout){
-            CommonBarCustomLayout customLayout = (CommonBarCustomLayout)this.mActivity;
-            if(customLayout.customRightLayout()){
+        if (this.mActivity instanceof CommonBarCustomLayout) {
+            CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
+            if (customLayout.customRightLayout()) {
                 return;
             }
         }
@@ -139,7 +144,6 @@ public class CommonBar {
     }
 
 
-
     private void initDefaultRightLayout(CommonBarSetting setting) {
         //是否显示右边控件局域
         if (setting.isRightLayoutShow()) {
@@ -169,12 +173,21 @@ public class CommonBar {
         }
     }
 
+
+    public void showMenu(){
+        if (fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
+            mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG);
+        }
+    }
+
     /**
      * haw:
      */
-    public interface CommonBarCustomLayout{
+    public interface CommonBarCustomLayout {
         boolean customLeftLayout();
+
         boolean customMiddleLayout();
+
         boolean customRightLayout();
     }
 

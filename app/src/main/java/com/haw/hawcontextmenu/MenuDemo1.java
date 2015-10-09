@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class MenuDemo1 extends Activity implements View.OnClickListener {
 
+    CommonBar commonBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,7 @@ public class MenuDemo1 extends Activity implements View.OnClickListener {
         barSetting.setMenuObjects(getMenuObjects());
 
 
-        CommonBar commonBar = new CommonBar(this, -1);
+        commonBar = new CommonBar(this, -1);
         commonBar.init(barSetting);
     }
 
@@ -52,7 +54,7 @@ public class MenuDemo1 extends Activity implements View.OnClickListener {
                 this.finish();
                 break;
             case CommonBar.RIGHT_TEXT_VIEW_ID:
-
+                commonBar.showMenu();
                 break;
             default:
             break;

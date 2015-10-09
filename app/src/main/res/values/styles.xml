@@ -15,7 +15,14 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:background">@drawable/common_bar_selector_bg</item>
+    </style>
 
-
+    <style name="MenuFragmentStyle" parent="AppTheme">
+        <!-- <item name="android:background">@android:color/transparent</item>
+        <item name="android:colorForeground">@android:color/transparent</item>
+        <item name="android:colorForegroundInverse">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>  -->
     </style>
 </resources>
