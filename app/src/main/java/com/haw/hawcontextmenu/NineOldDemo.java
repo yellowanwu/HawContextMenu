@@ -176,6 +176,7 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
         onClickPostion = (int) getRightValue();
         if (onClickPostion > colorImag.size() - 1) {
             Toast.makeText(this, String.format("当前[%s]个色彩图像,请在右边重新输入", colorImag.size()), Toast.LENGTH_SHORT).show();
+            return;
         }
         List<Animator> closeToUpAnimatorList = new ArrayList<>();
         List<Animator> closeToBottomAnimatorList = new ArrayList<>();
