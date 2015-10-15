@@ -36,10 +36,13 @@ public class CommonBarSetting implements Parcelable {
     private float middleTextSize = TEXT_SIZE + 2f;
     private boolean middleTextClickable = false;
 
+    /**
+     * 菜单属性
+     */
     private String menuTitle;
     private boolean hasMenu = false;
     private List<MenuObject> mMenuObjects;
-
+    private int menuWidth;
 
 
     public CommonBarSetting(){}
@@ -70,6 +73,7 @@ public class CommonBarSetting implements Parcelable {
         dest.writeString(this.menuTitle);
         dest.writeByte(hasMenu ? (byte) 1 : (byte) 0);
         dest.writeList(this.mMenuObjects);
+        dest.writeInt(this.menuWidth);
     }
 
     protected CommonBarSetting(Parcel in) {
@@ -93,6 +97,7 @@ public class CommonBarSetting implements Parcelable {
         this.hasMenu = in.readByte() != 0;
         this.mMenuObjects = new ArrayList<MenuObject>();
         in.readList(this.mMenuObjects, List.class.getClassLoader());
+        this.menuWidth = in.readInt();
     }
 
     public static final Creator<CommonBarSetting> CREATOR = new Creator<CommonBarSetting>() {
@@ -259,6 +264,12 @@ public class CommonBarSetting implements Parcelable {
         this.mMenuObjects = mMenuObjects;
     }
 
+    public int getMenuWidth() {
+        return menuWidth;
+    }
 
+    public void setMenuWidth(int menuWidth) {
+        this.menuWidth = menuWidth;
+    }
 
 }

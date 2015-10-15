@@ -1,12 +1,16 @@
 package com.haw.hawcontextmenu;
 
 import android.app.Activity;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
 import com.haw.hawcontextmenu.commonbar.CommonBar;
 import com.haw.hawcontextmenu.commonbar.CommonBarSetting;
 import com.haw.hawcontextmenu.commonbar.MenuObject;
+import com.haw.hawcontextmenu.commonbar.OnMenuItemClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +18,10 @@ import java.util.List;
 /**
  * Created by Administrator on 2015-9-29.
  */
-public class MenuDemo1 extends Activity implements View.OnClickListener {
+public class MenuDemo1 extends Activity implements View.OnClickListener,OnMenuItemClickListener {
 
-    CommonBar commonBar;
-
+    private CommonBar commonBar;
+    private List<MenuObject> menuObjects;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,20 +30,30 @@ public class MenuDemo1 extends Activity implements View.OnClickListener {
         CommonBarSetting barSetting = new CommonBarSetting();
         barSetting.setMiddleText("待办任务");
         barSetting.setMenuObjects(getMenuObjects());
-
-
+        barSetting.setMenuWidth(dip2px(this, 120f));
         commonBar = new CommonBar(this, -1);
         commonBar.init(barSetting);
     }
 
     private List<MenuObject> getMenuObjects() {
-        List<MenuObject> menuObjects = new ArrayList<>();
+        menuObjects = new ArrayList<>();
 
-        MenuObject agree = new MenuObject("同意");
-        agree.setResource(R.mipmap.face_agree_02);
-        MenuObject disagree = new MenuObject("不同意");
-        disagree.setResource(R.mipmap.face_disagree_02);
+        MenuObject add = new MenuObject("新增");
+        add.setDividerColor(Color.parseColor("#D4D4D4"));
+        add.setResource(R.mipmap.icn_1);
+        MenuObject upd = new MenuObject("修改");
+        upd.setDividerColor(Color.parseColor("#D4D4D4"));
+        upd.setResource(R.mipmap.icn_2);
+        MenuObject del = new MenuObject("删除");
+        del.setResource(R.mipmap.icn_3);
+        MenuObject agree = new MenuObject("批准");
+        agree.setResource(R.mipmap.icn_4);
+        MenuObject disagree = new MenuObject("驳回");
+        disagree.setResource(R.mipmap.icn_5);
 
+        menuObjects.add(add);
+        menuObjects.add(upd);
+        menuObjects.add(del);
         menuObjects.add(agree);
         menuObjects.add(disagree);
 
@@ -54,12 +68,27 @@ public class MenuDemo1 extends Activity implements View.OnClickListener {
                 this.finish();
                 break;
             case CommonBar.RIGHT_TEXT_VIEW_ID:
-                commonBar.showMenu();
+                commonBar.showPopupMenu(v);
                 break;
             default:
             break;
 
 
         }
+    }
+
+    @Override
+    public void onMenuItemClick(View clickedView, int position) {
+        Toast.makeText(this,menuObjects.get(position).getTitle(),Toast.LENGTH_SHORT).show();
+        commonBar.hidePopupMenu();
+    }
+
+
+    /**
+     * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    public static int dip2px(Context context, float dpValue) {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
     }
 }

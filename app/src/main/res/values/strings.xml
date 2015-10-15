@@ -4,4 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_menu_demo01">menu_demo01</string>
+    <string name="image_name">image01</string>
+    <string name="title_activity_nine_old_demo">NineOldDemo</string>
 </resources>

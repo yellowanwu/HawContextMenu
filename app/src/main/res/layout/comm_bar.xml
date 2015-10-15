@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/common_bar"
     android:layout_width="match_parent"
-    android:layout_height="40dip"
+    android:layout_height="50dip"
     android:background="@color/main_background"
     android:orientation="horizontal">
 
@@ -24,6 +24,7 @@
     <LinearLayout
         android:id="@+id/right_layout"
         style="@style/common_bar_layout"
+        android:layout_marginRight="10dp"
         android:paddingRight="0dp">
 
     </LinearLayout>

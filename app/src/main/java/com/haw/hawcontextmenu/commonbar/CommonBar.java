@@ -1,12 +1,15 @@
 package com.haw.hawcontextmenu.commonbar;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.FragmentManager;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.bstek.dorado.stk.common.lang.utils.StringUtils;
@@ -34,8 +37,12 @@ public class CommonBar {
     private LinearLayout leftLayout;
     private LinearLayout middleLayout;
     private LinearLayout rightLayout;
+
     private FragmentManager fragmentManager;
-    private DialogFragment mMenuDialogFragment;
+
+    private LinearLayout menuItemsLayout;
+    private MenuAdapter menuAdapter;
+    private PopupWindow mPopupWindow;
 
     public CommonBar(Activity activity, int layoutId) {
         this.mActivity = activity;
@@ -55,12 +62,59 @@ public class CommonBar {
         initMiddleLayout(setting);
         initRightLayout(setting);
         //haw:初始化功能菜单栏
-        initMenuFragment(setting);
+//        initMenuFragment(setting);
+        //haw:初始化mPopupWindow功能栏
+        initPopupMenu(setting);
+        //haw:初始化Menu适配器
+        initDropDownMenuAdapter(setting);
         return this;
     }
 
-    private void initMenuFragment(CommonBarSetting setting) {
-        mMenuDialogFragment = ContextMenuDialogFragment.newInstance(setting);
+    private void initPopupMenu(CommonBarSetting setting) {
+        View popView = this.mActivity.getLayoutInflater().inflate(R.layout.comm_bar_menu, null);
+        menuItemsLayout = (LinearLayout) popView.findViewById(R.id.comm_bar_menu_items_layout);
+        this.mPopupWindow = new PopupWindow(popView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
+        //设置宽度
+        int menuWidth = setting.getMenuWidth();
+        if (menuWidth <= 0) {
+            this.mPopupWindow.setWidth(this.mActivity.getResources().getDimensionPixelOffset(R.dimen.common_bar_menu_width));
+        } else {
+            this.mPopupWindow.setWidth(menuWidth);
+        }
+        // 设置popupWindow获取焦点，则返回键可以消失窗口
+        this.mPopupWindow.setFocusable(true);
+        // 设置PopupWindow外部可点击
+        this.mPopupWindow.setOutsideTouchable(true);
+        // 实例化一个ColorDrawable颜色为半透明
+        ColorDrawable bg = new ColorDrawable(0000000000);
+        this.mPopupWindow.setBackgroundDrawable(bg);
+        this.mPopupWindow.setAnimationStyle(R.style.common_bar_menu_animation);
+        this.mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                setBackgroundAlpha(1f);
+            }
+        });
+    }
+
+
+    private void initDropDownMenuAdapter(CommonBarSetting setting) {
+        menuAdapter = new MenuAdapter(this.mActivity, menuItemsLayout, setting.getMenuObjects());
+        if(this.mActivity instanceof  OnMenuItemClickListener){
+            menuAdapter.setOnItemClickListener((OnMenuItemClickListener) this.mActivity);
+        }
+//        menuAdapter.setAnimationDuration(mMenuParams.getAnimationDuration());
+    }
+
+    /**
+     * 设置添加屏幕的背景透明度
+     *
+     * @param bgAlpha
+     */
+    public void setBackgroundAlpha(float bgAlpha) {
+        WindowManager.LayoutParams lp = this.mActivity.getWindow().getAttributes();
+        lp.alpha = bgAlpha; //0.0-1.0
+        this.mActivity.getWindow().setAttributes(lp);
     }
 
 
@@ -108,7 +162,7 @@ public class CommonBar {
             if (setting.getLeftImageId() != -1) {
                 leftDrawable = mActivity.getResources().getDrawable(setting.getLeftImageId());
             } else {
-                leftDrawable = mActivity.getResources().getDrawable(R.drawable.common_bar_back_btn);
+                leftDrawable = mActivity.getResources().getDrawable(R.mipmap.common_bar_back_btn);//R.drawable.common_bar_back_btn
             }
             if (leftDrawable != null && setting.isLeftImageShow()) {
                 leftTextView.setCompoundDrawablesWithIntrinsicBounds(leftDrawable, null, null, null);
@@ -151,13 +205,13 @@ public class CommonBar {
             rightTextView.setId(RIGHT_TEXT_VIEW_ID);
             rightTextView.setGravity(Gravity.CENTER);
             rightTextView.setOnClickListener((View.OnClickListener) mActivity);
-            rightTextView.setBackgroundResource(R.drawable.common_bar_selector_bg);
+//            rightTextView.setBackgroundResource(R.drawable.common_bar_selector_bg);
             Drawable rightDrawable = null;
             //是否设置了右边控件图标
             if (setting.getLeftImageId() != -1) {
                 rightDrawable = mActivity.getResources().getDrawable(setting.getRightImageId());
             } else {
-                rightDrawable = mActivity.getResources().getDrawable(R.drawable.common_bar_more_btn);
+                rightDrawable = mActivity.getResources().getDrawable(R.mipmap.common_bar_more_btn);//R.drawable.common_bar_more_btn
             }
             if (rightDrawable != null && setting.isLeftImageShow()) {
                 rightTextView.setCompoundDrawablesWithIntrinsicBounds(rightDrawable, null, null, null);
@@ -173,12 +227,24 @@ public class CommonBar {
         }
     }
 
-
-    public void showMenu(){
-        if (fragmentManager.findFragmentByTag(ContextMenuDialogFragment.TAG) == null) {
-            mMenuDialogFragment.show(fragmentManager, ContextMenuDialogFragment.TAG);
-        }
+    /**
+     * 显示惨菜单栏
+     *
+     * @param view
+     */
+    public void showPopupMenu(View view) {
+        this.setBackgroundAlpha(0.8f);
+        mPopupWindow.showAsDropDown(view);
     }
+    /**
+     * 隐藏惨菜单栏
+     *
+     * @param view
+     */
+    public void hidePopupMenu() {
+        mPopupWindow.dismiss();
+    }
+
 
     /**
      * haw:
