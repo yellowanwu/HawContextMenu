@@ -174,6 +174,9 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
 
     private void shrinkAnimation() {
         onClickPostion = (int) getRightValue();
+        if (onClickPostion > colorImag.size() - 1) {
+            Toast.makeText(this, String.format("当前[%s]个色彩图像,请在右边重新输入", colorImag.size()), Toast.LENGTH_SHORT).show();
+        }
         List<Animator> closeToUpAnimatorList = new ArrayList<>();
         List<Animator> closeToBottomAnimatorList = new ArrayList<>();
 
@@ -215,9 +218,9 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
         AnimatorSet fullAnimatorSet = new AnimatorSet();
         fullAnimatorSet.play(closeToUp).with(closeToBottom);
         //haw:如果顶部动画数量>=底部动画数量，则先执行完底部动画后在执行点击对象动画
-        if(closeToBottomAnimatorList.size()>= closeToUpAnimatorList.size()){
+        if (closeToBottomAnimatorList.size() >= closeToUpAnimatorList.size()) {
             fullAnimatorSet.play(closeToBottom).before(closeToLeftSide);
-        }else{
+        } else {
             fullAnimatorSet.play(closeToUp).before(closeToLeftSide);
         }
 
@@ -226,8 +229,10 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
     }
 
 
-    /**'
+    /**
+     * '
      * haw:重置竖向翻转的图像位置
+     *
      * @param view
      * @param toTop true-重置Y轴的描点为图像的顶部，false-重置Y轴的描点为图像的底部
      */
@@ -239,8 +244,11 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
         ViewHelper.setPivotX(view, imgWidth / 2);
         ViewHelper.setPivotY(view, toTop ? 0 : imgHeight);
     }
-    /**'
+
+    /**
+     * '
      * haw:重置横向翻转的图像位置
+     *
      * @param view
      */
     private void resetSideAnimation(View view) {
@@ -249,7 +257,7 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
         //先讲对象位置设置还原，注意x,y的描点
         ViewHelper.setRotation(view, 0);
         ViewHelper.setPivotX(view, 0);//注意：由于图像在屏幕左边，所以X轴的锚点在0，因此图像向左翻转，反之即imgWidth
-        ViewHelper.setPivotY(view, imgHeight/2);
+        ViewHelper.setPivotY(view, imgHeight / 2);
     }
 
     public float getLeftValue() {
