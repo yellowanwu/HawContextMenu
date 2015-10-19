@@ -96,8 +96,8 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.reset:
                 this.resetColorImag();
-//                Log.d(TAG, String.format("getPivotX=[%s]",ViewHelper.getPivotX(imageSample) + ""));
-//                Log.d(TAG, String.format("getPivotY=[%s]", ViewHelper.getPivotY(imageSample) + ""));
+                //                Log.d(TAG, String.format("getPivotX=[%s]",ViewHelper.getPivotX(imageSample) + ""));
+                //                Log.d(TAG, String.format("getPivotY=[%s]", ViewHelper.getPivotY(imageSample) + ""));
                 ViewHelper.setRotation(imageSample, 0);
                 ViewHelper.setRotationY(imageSample, 0);
                 ViewHelper.setRotationX(imageSample, 0);
@@ -136,20 +136,28 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
                 Log.d(TAG, "setPivotY");
                 ViewHelper.setPivotY(imageSample, getLeftValue());
                 break;
-            case R.id.btn08://haw:
-                Log.d(TAG, "ofFloat");
+            case R.id.btn08: {//haw:
+                Log.d(TAG, "ofFloat rotationY");
+                ObjectAnimator animator = ObjectAnimator.ofFloat(imageSample, "rotationY", getLeftValue(), getRightValue());
+                AnimatorSet closeToBottom = new AnimatorSet();
+                closeToBottom.play(animator);
+                closeToBottom.setDuration(1500);
+                closeToBottom.start();
+                break;
+            }
+            case R.id.btn09://haw:
+                Log.d(TAG, "custom animation");
+                shrinkAnimation();
+                break;
+            case R.id.btn10: {//haw:
+                Log.d(TAG, "ofFloat rotationX");
                 ObjectAnimator animator = ObjectAnimator.ofFloat(imageSample, "rotationX", getLeftValue(), getRightValue());
                 AnimatorSet closeToBottom = new AnimatorSet();
                 closeToBottom.play(animator);
                 closeToBottom.setDuration(1500);
                 closeToBottom.start();
                 break;
-            case R.id.btn09://haw:
-                Log.d(TAG, "custom animation");
-                shrinkAnimation();
-                break;
-            case R.id.btn10://haw:
-                break;
+            }
             case R.id.btn11://haw:
                 break;
             default:
@@ -173,9 +181,14 @@ public class NineOldDemo extends Activity implements View.OnClickListener {
     private int onClickPostion = 2;
 
     private void shrinkAnimation() {
-        onClickPostion = (int) getRightValue();
-        if (onClickPostion > colorImag.size() - 1) {
-            Toast.makeText(this, String.format("当前[%s]个色彩图像,请在右边重新输入", colorImag.size()), Toast.LENGTH_SHORT).show();
+        try {
+            onClickPostion = (int) getRightValue();
+            if (onClickPostion > colorImag.size() - 1) {
+                Toast.makeText(this, String.format("当前[%s]个色彩图像,请在右边重新输入", colorImag.size()), Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }catch (Exception e){
+            Toast.makeText(this, String.format("请输入正确的数字"), Toast.LENGTH_SHORT).show();
             return;
         }
         List<Animator> closeToUpAnimatorList = new ArrayList<>();

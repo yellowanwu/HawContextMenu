@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by Administrator on 2015-9-29.
  */
-public class MenuDemo1 extends Activity implements View.OnClickListener,OnMenuItemClickListener {
+public class MenuDemo1 extends Activity implements View.OnClickListener, OnMenuItemClickListener {
 
     private CommonBar commonBar;
     private List<MenuObject> menuObjects;
@@ -31,26 +31,29 @@ public class MenuDemo1 extends Activity implements View.OnClickListener,OnMenuIt
         barSetting.setMiddleText("待办任务");
         barSetting.setMenuObjects(getMenuObjects());
         barSetting.setMenuWidth(dip2px(this, 120f));
+        barSetting.setMenuAnimation(CommonBarSetting.MENU_ANIM_SCALE);
         commonBar = new CommonBar(this, -1);
-        commonBar.init(barSetting);
+        commonBar.initView(barSetting).initMenuAdapter();
     }
 
     private List<MenuObject> getMenuObjects() {
         menuObjects = new ArrayList<>();
 
         MenuObject add = new MenuObject("新增");
-        add.setDividerColor(Color.parseColor("#D4D4D4"));
         add.setResource(R.mipmap.icn_1);
+        add.setBgColor(Color.parseColor("#FFFFFF"));
         MenuObject upd = new MenuObject("修改");
-        upd.setDividerColor(Color.parseColor("#D4D4D4"));
         upd.setResource(R.mipmap.icn_2);
+        upd.setBgColor(Color.parseColor("#FFFFFF"));
         MenuObject del = new MenuObject("删除");
         del.setResource(R.mipmap.icn_3);
+        del.setBgColor(Color.parseColor("#FFFFFF"));
         MenuObject agree = new MenuObject("批准");
         agree.setResource(R.mipmap.icn_4);
+        agree.setBgColor(Color.parseColor("#FFFFFF"));
         MenuObject disagree = new MenuObject("驳回");
         disagree.setResource(R.mipmap.icn_5);
-
+        disagree.setBgColor(Color.parseColor("#FFFFFF"));
         menuObjects.add(add);
         menuObjects.add(upd);
         menuObjects.add(del);
@@ -71,7 +74,7 @@ public class MenuDemo1 extends Activity implements View.OnClickListener,OnMenuIt
                 commonBar.showPopupMenu(v);
                 break;
             default:
-            break;
+                break;
 
 
         }
@@ -79,7 +82,7 @@ public class MenuDemo1 extends Activity implements View.OnClickListener,OnMenuIt
 
     @Override
     public void onMenuItemClick(View clickedView, int position) {
-        Toast.makeText(this,menuObjects.get(position).getTitle(),Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, menuObjects.get(position).getTitle(), Toast.LENGTH_SHORT).show();
         commonBar.hidePopupMenu();
     }
 

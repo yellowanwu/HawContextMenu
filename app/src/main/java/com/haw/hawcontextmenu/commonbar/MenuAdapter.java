@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.haw.hawcontextmenu.R;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,9 +24,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by haw on 2015-10-12.
  */
 public class MenuAdapter {
+    public static final int ANIMATION_DURATION_MILLIS = 150;
     private Context mContext;
     private LinearLayout mMenuWrapper;
     private List<MenuObject> mMenuObjects;
+    private List<View> menuItemViews;
     private OnMenuItemClickListener mOnMenuItemClickListener;
 
     public MenuAdapter(Context context, LinearLayout menuWrapper, List<MenuObject> menuObjects) {
@@ -40,9 +43,12 @@ public class MenuAdapter {
      * Creating views and filling to wrappers
      */
     private void setViews() {
+        menuItemViews = new ArrayList<>();
         for (int i = 0; i < mMenuObjects.size(); i++) {
             MenuObject menuObject = mMenuObjects.get(i);
-            mMenuWrapper.addView(this.getItemWrapper(mContext, menuObject, clickItem, i != mMenuObjects.size() - 1));
+            View view = this.getItemWrapper(mContext, menuObject, clickItem, i != mMenuObjects.size() - 1);
+            menuItemViews.add(view);
+            mMenuWrapper.addView(view);
         }
     }
 
@@ -56,7 +62,7 @@ public class MenuAdapter {
         LinearLayout.LayoutParams itemWrapperLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         itemWrapper.setLayoutParams(itemWrapperLayoutParams);
 
-//        itemWrapper.setGravity(Gravity.CENTER);
+        //        itemWrapper.setGravity(Gravity.CENTER);
         itemWrapper.setOnClickListener(onCLick);
         ImageView ico = this.getItemImageView(context, menuItem);
         TextView textView = this.getItemTextView(context, menuItem, ico);
@@ -79,15 +85,15 @@ public class MenuAdapter {
         return itemWrapper;
     }
 
-    public TextView getItemTextView(Context context, MenuObject menuItem,ImageView imageView) {
+    public TextView getItemTextView(Context context, MenuObject menuItem, ImageView imageView) {
         TextView itemTextView = new TextView(context);
         itemTextView.setId(generateViewId());
         RelativeLayout.LayoutParams textLayoutParams = new RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         textLayoutParams.addRule(RelativeLayout.RIGHT_OF, imageView.getId());
-        textLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL,RelativeLayout.TRUE);
+        textLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
         itemTextView.setLayoutParams(textLayoutParams);
-//        itemTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.menu_text_size));
+        //        itemTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, context.getResources().getDimension(R.dimen.menu_text_size));
         itemTextView.setText(menuItem.getTitle());
         itemTextView.setPadding(0, 0, 0, 0);
         itemTextView.setGravity(Gravity.CENTER_VERTICAL);
@@ -146,6 +152,37 @@ public class MenuAdapter {
         return dividerView;
     }
 
+    /**
+     * @Desc: 当CommonBarSetting中menuAnimation==MENU_ANIM_ANIMATOR时
+     * 在CommonBar调用showPopupMenu时将调用此方法
+     * @Author Haw
+     * 2015-10-15 23:39
+     **/
+    public void menuToggle() {
+        if (!isAnimationRun()) {
+            toggleIsMenuOpen();
+//            setAnimationRun(false);
+        }
+    }
+
+    /**
+     * @Desc: 设置动画是否正在运行
+     * @Author Haw
+     * 2015-10-16 17:48
+     **/
+    public void toggleIsAnimationRun() {
+        mIsAnimationRun = !mIsAnimationRun;
+    }
+
+    /**
+     * @Desc: 设置菜单是否已展开
+     * @Author Haw
+     * 2015-10-16 17:48
+     */
+    public void toggleIsMenuOpen() {
+        mIsMenuOpen = !mIsMenuOpen;
+    }
+
 
     private static final AtomicInteger sNextGeneratedId = new AtomicInteger(1);
 
@@ -161,7 +198,8 @@ public class MenuAdapter {
                 final int result = sNextGeneratedId.get();
                 // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
                 int newValue = result + 1;
-                if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
+                if (newValue > 0x00FFFFFF)
+                    newValue = 1; // Roll over to 1, not 0.
                 if (sNextGeneratedId.compareAndSet(result, newValue)) {
                     return result;
                 }
@@ -172,14 +210,9 @@ public class MenuAdapter {
     }
 
 
-    public void setOnItemClickListener(OnMenuItemClickListener listener) {
-        mOnMenuItemClickListener = listener;
-    }
-
     private View.OnClickListener clickItem = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mIsMenuOpen = true;
             viewClicked(v);
         }
     };
@@ -187,6 +220,7 @@ public class MenuAdapter {
     private boolean mIsMenuOpen = false;
     private boolean mIsAnimationRun = false;
     private View mClickedView;
+
     private void viewClicked(View v) {
         if (mIsMenuOpen && !mIsAnimationRun) {
             mClickedView = v;
@@ -194,11 +228,59 @@ public class MenuAdapter {
             if (childIndex == -1) {
                 return;
             }
-            mOnMenuItemClickListener.onMenuItemClick(v,childIndex);
-
-//            toggleIsAnimationRun();
-//            buildChosenAnimation(childIndex);
+            toggleIsAnimationRun();
+            onClickedAnimation(v,childIndex);
 //            toggleIsMenuOpen();
         }
+    }
+
+    /**
+     * @Desc: 点击动画，如果有特定的点击动画，则子类重写该方法
+     * @Author Haw
+     * 2015-10-19 15:58
+     **/
+    public void onClickedAnimation(View clickedView, int onClickPosition) {
+        mOnMenuItemClickListener.onMenuItemClick(clickedView, onClickPosition);
+    }
+
+
+    public List<View> getMenuItemViews() {
+        return menuItemViews;
+    }
+
+    public boolean isAnimationRun() {
+        return mIsAnimationRun;
+    }
+
+    public void setAnimationRun(boolean mIsAnimationRun) {
+        this.mIsAnimationRun = mIsAnimationRun;
+    }
+
+    public boolean isMenuOpen() {
+        return mIsMenuOpen;
+    }
+
+    public void setMenuOpen(boolean mIsMenuOpen) {
+        this.mIsMenuOpen = mIsMenuOpen;
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public void setContext(Context context) {
+        this.mContext = context;
+    }
+
+    public void setOnItemClickListener(OnMenuItemClickListener listener) {
+        mOnMenuItemClickListener = listener;
+    }
+
+    public OnMenuItemClickListener getOnItemClickListener() {
+        return this.mOnMenuItemClickListener;
+    }
+
+    public View getClickedView() {
+        return mClickedView;
     }
 }

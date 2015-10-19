@@ -15,6 +15,11 @@
         android:layout_height="wrap_content"
         android:text="效果一" />
     <Button
+        android:id="@+id/button03"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="效果二" />
+    <Button
         android:id="@+id/button02"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

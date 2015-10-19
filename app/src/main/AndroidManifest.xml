@@ -20,6 +20,9 @@
             android:name=".MenuDemo1"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
         <activity
+            android:name=".MenuDemo2"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+        <activity
             android:name=".NineOldDemo"
             android:label="@string/title_activity_nine_old_demo"
             android:theme="@android:style/Theme.Light.NoTitleBar"

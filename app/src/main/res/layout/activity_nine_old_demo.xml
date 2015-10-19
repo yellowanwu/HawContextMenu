@@ -154,7 +154,13 @@
                 android:id="@+id/btn08"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ofFloat"
+                android:text="ofFloatY"
+                android:textSize="8sp" />
+            <Button
+                android:id="@+id/btn10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ofFloatX"
                 android:textSize="8sp" />
 
             <Button
@@ -164,12 +170,6 @@
                 android:text="shrinkAnimation"
                 android:textSize="8sp" />
 
-            <Button
-                android:id="@+id/btn10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="8sp" />
 
             <Button
                 android:id="@+id/btn11"

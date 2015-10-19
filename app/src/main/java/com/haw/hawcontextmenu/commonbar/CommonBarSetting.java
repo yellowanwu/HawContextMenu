@@ -13,6 +13,8 @@ import java.util.List;
 public class CommonBarSetting implements Parcelable {
     private static final float TEXT_SIZE = 16f;
     private static final String TEXT_COLOR = "#222222";
+    public static final int MENU_ANIM_SCALE = 1;
+    public static final int MENU_ANIM_ANIMATOR = 9;
 
 
     private String leftText;
@@ -43,9 +45,11 @@ public class CommonBarSetting implements Parcelable {
     private boolean hasMenu = false;
     private List<MenuObject> mMenuObjects;
     private int menuWidth;
+    private int menuAnimation;
 
 
-    public CommonBarSetting(){}
+    public CommonBarSetting() {
+    }
 
     @Override
     public int describeContents() {
@@ -74,6 +78,7 @@ public class CommonBarSetting implements Parcelable {
         dest.writeByte(hasMenu ? (byte) 1 : (byte) 0);
         dest.writeList(this.mMenuObjects);
         dest.writeInt(this.menuWidth);
+        dest.writeInt(this.menuAnimation);
     }
 
     protected CommonBarSetting(Parcel in) {
@@ -98,6 +103,7 @@ public class CommonBarSetting implements Parcelable {
         this.mMenuObjects = new ArrayList<MenuObject>();
         in.readList(this.mMenuObjects, List.class.getClassLoader());
         this.menuWidth = in.readInt();
+        this.menuAnimation = in.readInt();
     }
 
     public static final Creator<CommonBarSetting> CREATOR = new Creator<CommonBarSetting>() {
@@ -272,4 +278,11 @@ public class CommonBarSetting implements Parcelable {
         this.menuWidth = menuWidth;
     }
 
+    public int getMenuAnimation() {
+        return menuAnimation;
+    }
+
+    public void setMenuAnimation(int menuAnimation) {
+        this.menuAnimation = menuAnimation;
+    }
 }

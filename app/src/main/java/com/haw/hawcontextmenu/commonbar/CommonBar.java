@@ -26,8 +26,8 @@ public class CommonBar {
     public static final int MIDDLE_TEXT_VIEW_ID = 0x093002;
     @android.support.annotation.IdRes
     public static final int RIGHT_TEXT_VIEW_ID = 0x093003;
-
-
+    private CommonBarSetting setting;
+    private final FragmentManager fragmentManager;
     private Activity mActivity;
     private TextView leftTextView;
     private TextView middleTextView;
@@ -38,9 +38,9 @@ public class CommonBar {
     private LinearLayout middleLayout;
     private LinearLayout rightLayout;
 
-    private FragmentManager fragmentManager;
-
+    private View popRootView;
     private LinearLayout menuItemsLayout;
+
     private MenuAdapter menuAdapter;
     private PopupWindow mPopupWindow;
 
@@ -57,23 +57,22 @@ public class CommonBar {
         fragmentManager = this.mActivity.getFragmentManager();//getSupportFragmentManager();
     }
 
-    public CommonBar init(CommonBarSetting setting) {
-        initLeftLayout(setting);
-        initMiddleLayout(setting);
-        initRightLayout(setting);
+    public CommonBar initView(CommonBarSetting setting) {
+        this.setting = setting;
+        initLeftLayout();
+        initMiddleLayout();
+        initRightLayout();
         //haw:初始化功能菜单栏
-//        initMenuFragment(setting);
+        //        initMenuFragment(setting);
         //haw:初始化mPopupWindow功能栏
-        initPopupMenu(setting);
-        //haw:初始化Menu适配器
-        initDropDownMenuAdapter(setting);
+        initPopupMenu();
         return this;
     }
 
-    private void initPopupMenu(CommonBarSetting setting) {
-        View popView = this.mActivity.getLayoutInflater().inflate(R.layout.comm_bar_menu, null);
-        menuItemsLayout = (LinearLayout) popView.findViewById(R.id.comm_bar_menu_items_layout);
-        this.mPopupWindow = new PopupWindow(popView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
+    private void initPopupMenu() {
+        popRootView = this.mActivity.getLayoutInflater().inflate(R.layout.comm_bar_menu, null);
+        menuItemsLayout = (LinearLayout) popRootView.findViewById(R.id.comm_bar_menu_items_layout);
+        this.mPopupWindow = new PopupWindow(popRootView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, false);
         //设置宽度
         int menuWidth = setting.getMenuWidth();
         if (menuWidth <= 0) {
@@ -88,22 +87,46 @@ public class CommonBar {
         // 实例化一个ColorDrawable颜色为半透明
         ColorDrawable bg = new ColorDrawable(0000000000);
         this.mPopupWindow.setBackgroundDrawable(bg);
-        this.mPopupWindow.setAnimationStyle(R.style.common_bar_menu_animation);
+        // 设置popWindow的显示隐藏动画
+        if (setting.getMenuAnimation() == CommonBarSetting.MENU_ANIM_SCALE) {
+            //缩放动画
+            this.mPopupWindow.setAnimationStyle(R.style.common_bar_menu_animation);
+        } else if (setting.getMenuAnimation() == CommonBarSetting.MENU_ANIM_ANIMATOR) {
+            /**
+             * @Desc: 不需要做任何事情
+             *
+             * @Author Haw
+             * 2015-10-16 17:41
+             **/
+        } else if (setting.getMenuAnimation() != 0) {
+            //自定义的anim文件夹中的动画资源文件.xml的id
+            this.mPopupWindow.setAnimationStyle(setting.getMenuAnimation());
+        } else {
+            //默认系统动画
+        }
         this.mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
             @Override
             public void onDismiss() {
                 setBackgroundAlpha(1f);
+                menuAdapter.setMenuOpen(false);
+                menuAdapter.setAnimationRun(false);
             }
         });
     }
 
-
-    private void initDropDownMenuAdapter(CommonBarSetting setting) {
-        menuAdapter = new MenuAdapter(this.mActivity, menuItemsLayout, setting.getMenuObjects());
-        if(this.mActivity instanceof  OnMenuItemClickListener){
+    /**
+     * @Desc: 初始化Menu适配器
+     * @Author Haw
+     * 2015-10-15 23:16
+     **/
+    public void initMenuAdapter() {
+        if (getMenuAdapter() == null) {
+            menuAdapter = new MenuAdapter(this.mActivity, menuItemsLayout, setting.getMenuObjects());
+        }
+        if (this.mActivity instanceof OnMenuItemClickListener) {
             menuAdapter.setOnItemClickListener((OnMenuItemClickListener) this.mActivity);
         }
-//        menuAdapter.setAnimationDuration(mMenuParams.getAnimationDuration());
+        //        menuAdapter.setAnimationDuration(mMenuParams.getAnimationDuration());
     }
 
     /**
@@ -118,38 +141,38 @@ public class CommonBar {
     }
 
 
-    private void initLeftLayout(CommonBarSetting setting) {
+    private void initLeftLayout() {
         if (this.mActivity instanceof CommonBarCustomLayout) {
             CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
             if (customLayout.customLeftLayout()) {
                 return;
             }
         }
-        initDefaultLeftLayout(setting);
+        initDefaultLeftLayout();
     }
 
 
-    private void initMiddleLayout(CommonBarSetting setting) {
+    private void initMiddleLayout() {
         if (this.mActivity instanceof CommonBarCustomLayout) {
             CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
             if (customLayout.customMiddleLayout()) {
                 return;
             }
         }
-        initDefaultMiddleLayout(setting);
+        initDefaultMiddleLayout();
     }
 
-    private void initRightLayout(CommonBarSetting setting) {
+    private void initRightLayout() {
         if (this.mActivity instanceof CommonBarCustomLayout) {
             CommonBarCustomLayout customLayout = (CommonBarCustomLayout) this.mActivity;
             if (customLayout.customRightLayout()) {
                 return;
             }
         }
-        initDefaultRightLayout(setting);
+        initDefaultRightLayout();
     }
 
-    private void initDefaultLeftLayout(CommonBarSetting setting) {
+    private void initDefaultLeftLayout() {
         //是否显示左边控件局域
         if (setting.isLeftLayoutShow()) {
             leftTextView = new TextView(mActivity);
@@ -179,7 +202,7 @@ public class CommonBar {
     }
 
 
-    private void initDefaultMiddleLayout(CommonBarSetting setting) {
+    private void initDefaultMiddleLayout() {
         middleTextView = new TextView(mActivity);
         middleTextView.setId(MIDDLE_TEXT_VIEW_ID);
         middleTextView.setGravity(Gravity.CENTER);
@@ -198,14 +221,14 @@ public class CommonBar {
     }
 
 
-    private void initDefaultRightLayout(CommonBarSetting setting) {
+    private void initDefaultRightLayout() {
         //是否显示右边控件局域
         if (setting.isRightLayoutShow()) {
             rightTextView = new TextView(mActivity);
             rightTextView.setId(RIGHT_TEXT_VIEW_ID);
             rightTextView.setGravity(Gravity.CENTER);
             rightTextView.setOnClickListener((View.OnClickListener) mActivity);
-//            rightTextView.setBackgroundResource(R.drawable.common_bar_selector_bg);
+            //            rightTextView.setBackgroundResource(R.drawable.common_bar_selector_bg);
             Drawable rightDrawable = null;
             //是否设置了右边控件图标
             if (setting.getLeftImageId() != -1) {
@@ -235,16 +258,46 @@ public class CommonBar {
     public void showPopupMenu(View view) {
         this.setBackgroundAlpha(0.8f);
         mPopupWindow.showAsDropDown(view);
+        menuAdapter.menuToggle();
+        //        if (setting.getMenuAnimation() != CommonBarSetting.MENU_ANIM_ANIMATOR) {//popRootView.getVisibility() != View.GONE
+        //            mPopupWindow.showAsDropDown(view);
+        //            menuAdapter.setMenuOpen(true);
+        //            menuAdapter.setAnimationRun(false);
+        //        } else {
+        //            mPopupWindow.showAsDropDown(view);
+        //            new Handler().post(new Runnable() {
+        //                @Override
+        //                public void run() {
+        ////                    popRootView.setVisibility(View.VISIBLE);
+        //                    menuAdapter.menuToggle();
+        //                }
+        //            });
+        //        }
     }
+
     /**
      * 隐藏惨菜单栏
-     *
-     * @param view
      */
     public void hidePopupMenu() {
         mPopupWindow.dismiss();
     }
 
+
+    public MenuAdapter getMenuAdapter() {
+        return menuAdapter;
+    }
+
+    public void setMenuAdapter(MenuAdapter menuAdapter) {
+        this.menuAdapter = menuAdapter;
+    }
+
+    public LinearLayout getMenuItemsLayout() {
+        return menuItemsLayout;
+    }
+
+    public void setMenuItemsLayout(LinearLayout menuItemsLayout) {
+        this.menuItemsLayout = menuItemsLayout;
+    }
 
     /**
      * haw:

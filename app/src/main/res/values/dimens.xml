@@ -7,6 +7,7 @@
     <dimen name="common_bar_menu_item_ico_width">50dp</dimen>
     <dimen name="common_bar_menu_item_ico_height">50dp</dimen>
     <dimen name="common_bar_menu_item_ico_padding">10dp</dimen>
+
     <dimen name="divider_height">0.5dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 </resources>
